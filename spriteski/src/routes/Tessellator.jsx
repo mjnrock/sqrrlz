@@ -1,12 +1,11 @@
 import { useState, useRef, useEffect } from "react";
 
-import { InputText } from "../components/InputField.jsx";
+import { byGrid } from "./../modules/tiles/tessellators/Grid.js";
 
-import { Tile } from "../modules/tiles/Tile.js";
-import { TileSet } from "../modules/tiles/TileSet.js";
-import FileUpload from "../components/tessellator/FileUpload.jsx";
-import CanvasPreview from "../components/tessellator/ImagePreview.jsx";
-import TileSetPreview from "../components/tessellator/TileSetPreview.jsx";
+import { InputText } from "../components/InputField.jsx";
+import { FileUpload } from "../components/tessellator/FileUpload.jsx";
+import { CanvasPreview } from "../components/tessellator/ImagePreview.jsx";
+import { TileSetPreview } from "../components/tessellator/TileSetPreview.jsx";
 
 export function Tessellator() {
 	const [ image, setImage ] = useState(null);
@@ -30,33 +29,12 @@ export function Tessellator() {
 		setResultMagnitude(threshold);
 	};
 	const tessellate = async e => {
-		const tileset = await TileSet.Factory({ source: canvasRef.current });
-
-		if(isRowXCol) {
-			// LTR-TTB
-			for(let row = 0; row < tileset.height; row += tileHeight) {
-				for(let col = 0; col < tileset.width; col += tileWidth) {
-					let [ x, y ] = [ col / tileWidth, row / tileHeight ];
-					const tile = new Tile({ width: tileWidth, height: tileHeight, tags: [ `${ x },${ y }` ] });
-
-					await tile.paint(tileset.canvas, col, row, tileWidth, tileHeight, 0, 0, tileWidth, tileHeight);
-
-					tileset.addTile(tile);
-				}
-			}
-		} else {
-			// TTB-LTR
-			for(let col = 0; col < tileset.width; col += tileWidth) {
-				for(let row = 0; row < tileset.height; row += tileHeight) {
-					let [ x, y ] = [ col / tileWidth, row / tileHeight ];
-					const tile = new Tile({ width: tileWidth, height: tileHeight, tags: [ `${ x },${ y }` ] });
-
-					await tile.paint(tileset.canvas, col, row, tileWidth, tileHeight, 0, 0, tileWidth, tileHeight);
-
-					tileset.addTile(tile);
-				}
-			}
-		}
+		const tileset = await byGrid({
+			source: canvasRef.current,
+			isRowXCol,
+			tileWidth,
+			tileHeight,
+		});
 
 		canvasRef.current = tileset.canvas;
 
@@ -82,58 +60,61 @@ export function Tessellator() {
 
 	return (
 		<div className="flex flex-col h-screen gap-4 m-8">
-			<div className="m-auto">
-				<FileUpload onImage={ img => setImage(img) } />
-			</div>
+			{
+				!image ? (
+					<div className="m-auto">
+						<FileUpload onImage={ img => setImage(img) } />
+					</div>
+				) : null
+			}
 
 			<div className="m-auto">
 				<CanvasPreview canvasRef={ canvasRef } hide={ !image } />
+
+				{
+					image ? (
+						<div className="flex flex-col items-center w-full">
+							<div className="flex flex-row gap-2">
+								<InputText
+									type="number"
+									label="Tile Width"
+									placeholder="16, 32, 64, ..."
+									value={ tileWidth }
+									onChange={ e => setTileWidth(~~e.target.value) }
+								/>
+
+								<InputText
+									type="number"
+									label="Tile Height"
+									placeholder="16, 32, 64, ..."
+									value={ tileHeight }
+									onChange={ e => setTileHeight(~~e.target.value) }
+								/>
+							</div>
+
+							<div className="flex flex-row">
+								<button
+									className="px-4 py-2 mt-4 font-mono text-gray-700 border border-solid rounded bg-neutral-50 hover:bg-neutral-100 border-neutral-300 hover:border-neutral-400"
+									onClick={ tessellate }
+									style={ {
+										fontFamily: "'Fredoka One', cursive"
+									} }
+								>
+									Tessellate
+								</button>
+							</div>
+						</div>
+					) : null
+				}
 			</div>
 
 			<hr />
 
 			<div className="m-auto">
-				<TileSetPreview isRowXCol={ isRowXCol } tiles={ tiles } size={ resultMagnitude } />
-			</div>
-
-			<div className="m-auto">
-				{
-					image ? (
-						<div className="flex flex-row w-full gap-4">
-							<InputText
-								type="number"
-								label="Tile Width"
-								placeholder="16, 32, 64, ..."
-								value={ tileWidth }
-								onChange={ e => setTileWidth(~~e.target.value) }
-							/>
-
-							<InputText
-								type="number"
-								label="Tile Height"
-								placeholder="16, 32, 64, ..."
-								value={ tileHeight }
-								onChange={ e => setTileHeight(~~e.target.value) }
-							/>
-
-							<button
-								className="px-4 py-2 mt-4 font-bold text-white bg-blue-500 rounded hover:bg-blue-700"
-								onClick={ tessellate }
-								style={ {
-									fontFamily: "'Fredoka One', cursive"
-								} }
-							>
-								Tessellate
-							</button>
-						</div>
-					) : null
-				}
-
 				{
 					tiles.length ? (
-						<div className="flex flex-col w-full gap-4">
-
-							<div className="flex flex-row w-full gap-4">
+						<div className="flex flex-col items-center w-full">
+							<div className="flex flex-row gap-2">
 								<InputText
 									type="number"
 									label={ `Display Size` }
@@ -141,27 +122,31 @@ export function Tessellator() {
 									value={ resultMagnitude }
 									onChange={ e => setResultMagnitude(~~e.target.value) }
 								/>
+							</div>
 
+							<div className="flex flex-row gap-2">
 								<button
-									className="px-4 py-2 mt-4 font-bold text-white bg-blue-500 rounded hover:bg-blue-700"
+									className="px-4 py-2 mt-4 text-gray-700 border border-solid rounded bg-neutral-50 hover:bg-neutral-100 border-neutral-300 hover:border-neutral-400"
 									onClick={ e => calculateRowsAndColumns(0) }
+									style={ { fontFamily: "'Fredoka One', cursive" } }
 								>
 									Evenly Distribute
 								</button>
 
 								<button
-									className="px-4 py-2 mt-4 font-bold text-white bg-blue-500 rounded hover:bg-blue-700"
+									className="px-4 py-2 mt-4 text-gray-700 border border-solid rounded bg-neutral-50 hover:bg-neutral-100 border-neutral-300 hover:border-neutral-400"
 									onClick={ e => calculateRowsAndColumns(1) }
+									style={ { fontFamily: "'Fredoka One', cursive" } }
 								>
 									Source Ratio
 								</button>
 
 								<button
-									className="px-4 py-2 mt-4 font-bold text-white bg-blue-500 rounded hover:bg-blue-700"
+									className="px-4 py-2 mt-4 text-gray-700 border border-solid rounded bg-neutral-50 hover:bg-neutral-100 border-neutral-300 hover:border-neutral-400"
 									onClick={ e => {
-
 										setIsRowXCol(!isRowXCol);
 									} }
+									style={ { fontFamily: "'Fredoka One', cursive" } }
 								>
 									Swap to { isRowXCol ? "TTB-LTR" : "LTR-TTB" }
 								</button>
@@ -169,6 +154,10 @@ export function Tessellator() {
 						</div>
 					) : null
 				}
+			</div>
+
+			<div className="m-auto">
+				<TileSetPreview isRowXCol={ isRowXCol } tiles={ tiles } size={ resultMagnitude } />
 			</div>
 		</div>
 	);

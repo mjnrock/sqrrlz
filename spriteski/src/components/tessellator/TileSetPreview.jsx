@@ -1,45 +1,47 @@
-import { useState, useEffect, useRef } from "react";
-
 import { Canvas } from "./Canvas.jsx";
 
-export function TileSetPreview({ tiles, isRowXCol, size, ...props }) {
-	let result;
 
-	if(isRowXCol) {
-		result = tiles
-			// LTR-TTB
-			.reduce((rows, tile, index) => {
-				const rowIndex = Math.floor(index / size);
-				const columnIndex = index % size;
+export function TileSetPreview({ tiles, isRowXCol, size }) {
+	function handleCanvasClick(e, tile) {
+		if(e.ctrlKey) {
+			const canvasData = tile.canvas.toDataURL();
 
-				if(!rows[ rowIndex ]) {
-					rows[ rowIndex ] = [];
-				}
+			navigator.clipboard.writeText(canvasData);
 
-				rows[ rowIndex ][ columnIndex ] = (
-					<Canvas key={ tile.id } canvas={ tile.canvas } data-tags={ tile.getTags() } />
-				);
-
-				return rows;
-			}, []);
-	} else {
-		result = tiles
-			// TTB-LTR
-			.reduce((rows, tile, index) => {
-				const rowIndex = index % size;
-				const columnIndex = Math.floor(index / size);
-
-				if(!rows[ rowIndex ]) {
-					rows[ rowIndex ] = [];
-				}
-
-				rows[ rowIndex ][ columnIndex ] = (
-					<Canvas key={ tile.id } canvas={ tile.canvas } data-tags={ tile.getTags() } />
-				);
-
-				return rows;
-			}, []);
+			console.info("Canvas data copied to clipboard: ", canvasData);
+		}
 	}
+
+	const result = tiles
+		.reduce((rows, tile, index) => {
+			let rowIndex;
+			let columnIndex;
+			if(isRowXCol) {
+				// LTR-TTB
+				rowIndex = Math.floor(index / size);
+				columnIndex = index % size;
+			} else {
+				// TTB-LTR
+				rowIndex = index % size;
+				columnIndex = Math.floor(index / size);
+			}
+
+			if(!rows[ rowIndex ]) {
+				rows[ rowIndex ] = [];
+			}
+
+			rows[ rowIndex ][ columnIndex ] = (
+				<Canvas
+					key={ tile.id }
+					className={ `p-2 border border-gray-200 hover:border-gray-400 active:bg-gray-100 border-solid rounded shadow-md hover:shadow-lg cursor-pointer` }
+					canvas={ tile.canvas }
+					onClick={ e => handleCanvasClick(e, tile) }
+					data-tags={ tile.getTags() }
+				/>
+			);
+
+			return rows;
+		}, []);
 
 	return (
 		<div className={ `flex flex-col w-full gap-2` }>

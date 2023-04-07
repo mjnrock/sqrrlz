@@ -2,14 +2,27 @@ import { Base64 } from "./Base64.js";
 import { Identity } from "./Identity.js";
 
 export class Tile extends Identity {
-	static async Factory({ source, id, tags, ...rest } = {}) {
-		let tile = new this({ id, tags, ...rest }),
+	static async Factory({ source, id, tags, width, height, ...rest } = {}) {
+		let tile = new this({ id, tags, width, height, ...rest }),
+			canvas;
+
+		if(Array.isArray(source)) {
+			let [ c, ...args ] = source;
+
+			canvas = await Base64.Decode(c);
+
+			tile.width = width || canvas.width;
+			tile.height = height || canvas.height;
+	
+			await tile.paint(canvas, ...args);
+		} else {
 			canvas = await Base64.Decode(source);
 
-		tile.width = canvas.width;
-		tile.height = canvas.height;
-
-		await tile.paint(canvas);
+			tile.width = width || canvas.width;
+			tile.height = height || canvas.height;
+	
+			await tile.paint(canvas);
+		}
 
 		return tile;
 	}

@@ -27,7 +27,8 @@
 		],
 		"rules": {
 			"no-unused-vars": "off",
-			"react-hooks/exhaustive-deps": "off"
+			"react-hooks/exhaustive-deps": "off",
+			"import/no-anonymous-default-export": "off"
 		}
 	},
 	"browserslist": {
