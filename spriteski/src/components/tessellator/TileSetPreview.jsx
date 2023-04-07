@@ -17,7 +17,7 @@ export function TileSetPreview({ tiles, isRowXCol, size, ...props }) {
 				}
 
 				rows[ rowIndex ][ columnIndex ] = (
-					<Canvas key={ tile.id } canvas={ tile.canvas } />
+					<Canvas key={ tile.id } canvas={ tile.canvas } data-tags={ tile.getTags() } />
 				);
 
 				return rows;
@@ -34,7 +34,7 @@ export function TileSetPreview({ tiles, isRowXCol, size, ...props }) {
 				}
 
 				rows[ rowIndex ][ columnIndex ] = (
-					<Canvas key={ tile.id } canvas={ tile.canvas } />
+					<Canvas key={ tile.id } canvas={ tile.canvas } data-tags={ tile.getTags() } />
 				);
 
 				return rows;

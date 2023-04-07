@@ -15,6 +15,9 @@ export class Identity {
 	hasTag (...tags) {
 		return tags.every(tag => this.tags.has(tag));
 	}
+	getTags() {
+		return Array.from(this.tags);
+	}
 
 	toObject() {
 		return {

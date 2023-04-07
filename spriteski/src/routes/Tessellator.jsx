@@ -36,7 +36,8 @@ export function Tessellator() {
 			// LTR-TTB
 			for(let row = 0; row < tileset.height; row += tileHeight) {
 				for(let col = 0; col < tileset.width; col += tileWidth) {
-					const tile = new Tile({ width: tileWidth, height: tileHeight });
+					let [ x, y ] = [ col / tileWidth, row / tileHeight ];
+					const tile = new Tile({ width: tileWidth, height: tileHeight, tags: [ `${ x },${ y }` ] });
 
 					await tile.paint(tileset.canvas, col, row, tileWidth, tileHeight, 0, 0, tileWidth, tileHeight);
 
@@ -47,7 +48,8 @@ export function Tessellator() {
 			// TTB-LTR
 			for(let col = 0; col < tileset.width; col += tileWidth) {
 				for(let row = 0; row < tileset.height; row += tileHeight) {
-					const tile = new Tile({ width: tileWidth, height: tileHeight });
+					let [ x, y ] = [ col / tileWidth, row / tileHeight ];
+					const tile = new Tile({ width: tileWidth, height: tileHeight, tags: [ `${ x },${ y }` ] });
 
 					await tile.paint(tileset.canvas, col, row, tileWidth, tileHeight, 0, 0, tileWidth, tileHeight);
 
