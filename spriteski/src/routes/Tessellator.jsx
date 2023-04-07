@@ -71,42 +71,43 @@ export function Tessellator() {
 			<div className="m-auto">
 				<CanvasPreview canvasRef={ canvasRef } hide={ !image } />
 
-				{/* TODO: Eventually this should be a dropdown that selects the algorithm */}
-				<div className="w-full mt-4 text-lg italic font-bold text-center">byGrid</div>
-
 				{
 					image ? (
-						<div className="flex flex-col items-center w-full">
-							<div className="flex flex-row gap-2">
-								<InputText
-									type="number"
-									label="Tile Width"
-									placeholder="16, 32, 64, ..."
-									value={ tileWidth }
-									onChange={ e => setTileWidth(~~e.target.value) }
-								/>
+						<>
+							{/* TODO: Eventually this should be a dropdown that selects the algorithm */ }
+							<div className="w-full mt-4 text-lg italic font-bold text-center">byGrid</div>
+							<div className="flex flex-col items-center w-full">
+								<div className="flex flex-row gap-2">
+									<InputText
+										type="number"
+										label="Tile Width"
+										placeholder="16, 32, 64, ..."
+										value={ tileWidth }
+										onChange={ e => setTileWidth(~~e.target.value) }
+									/>
 
-								<InputText
-									type="number"
-									label="Tile Height"
-									placeholder="16, 32, 64, ..."
-									value={ tileHeight }
-									onChange={ e => setTileHeight(~~e.target.value) }
-								/>
-							</div>
+									<InputText
+										type="number"
+										label="Tile Height"
+										placeholder="16, 32, 64, ..."
+										value={ tileHeight }
+										onChange={ e => setTileHeight(~~e.target.value) }
+									/>
+								</div>
 
-							<div className="flex flex-row">
-								<button
-									className="px-4 py-2 mt-4 font-mono text-gray-700 border border-solid rounded bg-neutral-50 hover:bg-neutral-100 border-neutral-300 hover:border-neutral-400"
-									onClick={ tessellate }
-									style={ {
-										fontFamily: "'Fredoka One', cursive"
-									} }
-								>
-									Tessellate
-								</button>
+								<div className="flex flex-row">
+									<button
+										className="px-4 py-2 mt-4 font-mono text-gray-700 border border-solid rounded bg-neutral-50 hover:bg-neutral-100 border-neutral-300 hover:border-neutral-400"
+										onClick={ tessellate }
+										style={ {
+											fontFamily: "'Fredoka One', cursive"
+										} }
+									>
+										Tessellate
+									</button>
+								</div>
 							</div>
-						</div>
+						</>
 					) : null
 				}
 			</div>
