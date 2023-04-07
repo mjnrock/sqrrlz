@@ -74,8 +74,8 @@ export function Default() {
 	}, [ image ]);
 
 	return (
-		<div className="flex flex-col items-center justify-center h-screen gap-4">
-			<div>
+		<div className="flex flex-col h-screen gap-4 m-4">
+			<div className="m-auto">
 				<input
 					type="file"
 					id="fileInput"
@@ -92,77 +92,48 @@ export function Default() {
 				</button>
 			</div>
 
-			<div>
+			<div className="m-auto">
 				<canvas
 					ref={ canvasRef }
 					className={ `p-4 border border-gray-200 hover:border-gray-300 border-solid rounded shadow-lg cursor-pointer` + (image ? "" : " hidden") }
 				/>
 			</div>
 
-			{
-				image ? (
-					<div>
-						<button
-							className="px-4 py-2 mt-4 font-bold text-white bg-blue-500 rounded hover:bg-blue-700"
-							onClick={ async e => {
-								const tileset = await TileSet.Factory({ source: canvasRef.current });
+			<hr />
 
-								for(let y = 0; y < tileset.height; y += tileHeight) {
-									for(let x = 0; x < tileset.width; x += tileWidth) {
-										const tile = new Tile({ width: tileWidth, height: tileHeight });
+			<div className="m-auto">
+				<div className="flex flex-col w-full gap-2">
+					{
+						tiles
+							.reduce((rows, tile, index) => {
+								const rowIndex = Math.floor(index / resultColumns);
+								const columnIndex = index % resultColumns;
 
-										await tile.paint(tileset.canvas, x, y, tileWidth, tileHeight, 0, 0, tileWidth, tileHeight);
-
-										tileset.addTile(tile);
-									}
+								if(!rows[ rowIndex ]) {
+									rows[ rowIndex ] = [];
 								}
 
-								canvasRef.current = tileset.canvas;
+								rows[ rowIndex ][ columnIndex ] = (
+									<div key={ tile.id } className="flex-none">
+										<CanvasComponent canvas={ tile.canvas } />
+									</div>
+								);
 
-								setTiles(tileset.tiles);
-							} }
-							style={ {
-								fontFamily: "'Fredoka One', cursive"
-							} }
-						>
-							Tessellate
-						</button>
-					</div>
-				) : null
-			}
-
-
-			<div className="flex flex-col w-full gap-1">
-				{
-					tiles
-						.reduce((rows, tile, index) => {
-							const rowIndex = Math.floor(index / resultColumns);
-							const columnIndex = index % resultColumns;
-
-							if(!rows[ rowIndex ]) {
-								rows[ rowIndex ] = [];
-							}
-
-							rows[ rowIndex ][ columnIndex ] = (
-								<div key={ tile.id } className="flex-none">
-									<CanvasComponent canvas={ tile.canvas } />
+								return rows;
+							}, [])
+							.map((row, index) => (
+								<div key={ index } className="flex gap-2">
+									{ row }
 								</div>
-							);
-
-							return rows;
-						}, [])
-						.map((row, index) => (
-							<div key={ index } className="flex items-center justify-center gap-2">
-								{ row }
-							</div>
-						))
-				}
+							))
+					}
+				</div>
 			</div>
 
-			{
-				tiles.length ? (
-					<div className="flex flex-col items-center justify-center w-full gap-4">
-						<div className="flex flex-row items-center justify-center w-full gap-4">
+			<div className="m-auto">
+				{
+					image ? (
+						<div className="flex flex-row w-full gap-4">
 							<InputText
 								type="number"
 								label="Tile Width"
@@ -179,34 +150,68 @@ export function Default() {
 								onChange={ e => setTileHeight(~~e.target.value) }
 							/>
 
-							<InputText
-								type="number"
-								label="Display Columns"
-								placeholder="1, 2, 3, ..."
-								value={ resultColumns }
-								onChange={ e => setResultColumns(~~e.target.value) }
-							/>
-						</div>
-
-						<div className="flex flex-row items-center justify-center w-full gap-4">
 							<button
 								className="px-4 py-2 mt-4 font-bold text-white bg-blue-500 rounded hover:bg-blue-700"
-								onClick={ e => calculateRowsAndColumns(0) }
-							>
-								Evenly Distribute
-							</button>
+								onClick={ async e => {
+									const tileset = await TileSet.Factory({ source: canvasRef.current });
 
-							<button
-								className="px-4 py-2 mt-4 font-bold text-white bg-blue-500 rounded hover:bg-blue-700"
-								onClick={ e => calculateRowsAndColumns(1) }
+									for(let y = 0; y < tileset.height; y += tileHeight) {
+										for(let x = 0; x < tileset.width; x += tileWidth) {
+											const tile = new Tile({ width: tileWidth, height: tileHeight });
+
+											await tile.paint(tileset.canvas, x, y, tileWidth, tileHeight, 0, 0, tileWidth, tileHeight);
+
+											tileset.addTile(tile);
+										}
+									}
+
+									canvasRef.current = tileset.canvas;
+
+									setTiles(tileset.tiles);
+
+									calculateRowsAndColumns(1);
+								} }
+								style={ {
+									fontFamily: "'Fredoka One', cursive"
+								} }
 							>
-								Source Ratio
+								Tessellate
 							</button>
 						</div>
-					</div>
-				) : null
-			}
+					) : null
+				}
 
+				{
+					tiles.length ? (
+						<div className="flex flex-col w-full gap-4">
+
+							<div className="flex flex-row w-full gap-4">
+								<InputText
+									type="number"
+									label="Display Columns"
+									placeholder="1, 2, 3, ..."
+									value={ resultColumns }
+									onChange={ e => setResultColumns(~~e.target.value) }
+								/>
+
+								<button
+									className="px-4 py-2 mt-4 font-bold text-white bg-blue-500 rounded hover:bg-blue-700"
+									onClick={ e => calculateRowsAndColumns(0) }
+								>
+									Evenly Distribute
+								</button>
+
+								<button
+									className="px-4 py-2 mt-4 font-bold text-white bg-blue-500 rounded hover:bg-blue-700"
+									onClick={ e => calculateRowsAndColumns(1) }
+								>
+									Source Ratio
+								</button>
+							</div>
+						</div>
+					) : null
+				}
+			</div>
 		</div>
 	);
 }
