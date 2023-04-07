@@ -71,6 +71,9 @@ export function Tessellator() {
 			<div className="m-auto">
 				<CanvasPreview canvasRef={ canvasRef } hide={ !image } />
 
+				{/* TODO: Eventually this should be a dropdown that selects the algorithm */}
+				<div className="w-full mt-4 text-lg italic font-bold text-center">byGrid</div>
+
 				{
 					image ? (
 						<div className="flex flex-col items-center w-full">
