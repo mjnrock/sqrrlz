@@ -1,14 +1,14 @@
-import { BrowserRouter, Switch, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Default from "./routes/Default";
+import Tessellator from "./routes/Tessellator";
 
 export function App() {
 	return (
 		<BrowserRouter>
-			<Switch>
-				<Route exact path="/">
-					<Default />
-				</Route>
-			</Switch>
+			<Routes>
+				<Route path="/" element={ <Default /> } />
+				<Route path="/tessellator" element={ <Tessellator /> } />
+			</Routes>
 		</BrowserRouter>
 	);
 }
