@@ -1,7 +1,7 @@
 import { Canvas } from "./Canvas.jsx";
 
 
-export function TileSetPreview({ tiles, isRowXCol, size }) {
+export function TileSetPreview({ tiles, isRowXCol = true, size = 1 }) {
 	function handleCanvasClick(e, tile) {
 		if(e.ctrlKey) {
 			const canvasData = tile.canvas.toDataURL();
