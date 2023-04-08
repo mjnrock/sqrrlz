@@ -1,14 +1,13 @@
-import { useRef, useContext } from "react";
+import { useRef, useContext, useEffect } from "react";
+import { Link } from "react-router-dom";
 
 import { byGrid } from "./../modules/tiles/tessellators/Grid.js";
 
 import { InputText } from "../components/InputField.jsx";
 import { FileUpload } from "../components/tessellator/FileUpload.jsx";
-import { ImagePreview } from "../components/tessellator/ImagePreview.jsx";
 import { TileSetPreview } from "../components/tessellator/TileSetPreview.jsx";
 
-import { Context, EnumAction } from "../App.jsx";
-import { Link } from "react-router-dom";
+import { Context, EnumAction } from "./../contexts/Tessellation.js";
 
 export function Tessellator() {
 	const [ state, dispatch ] = useContext(Context);
@@ -43,20 +42,23 @@ export function Tessellator() {
 		});
 	};
 
+	useEffect(() => {
+		dispatch({
+			type: EnumAction.SET_TILESET,
+			payload: {
+				tileset: null,
+			},
+		});
+	}, [ image ]);
+
 	return (
 		<div className="flex items-center justify-center h-screen">
 			<div className="flex flex-col gap-4">
-				{
-					!image ? (
-						<div className="m-auto">
-							<FileUpload onImage={ img => tessellate({ image: img }) } />
-						</div>
-					) : null
-				}
+				<div className="m-auto">
+					<FileUpload image={ image } onImage={ img => tessellate({ image: img }) } />
+				</div>
 
 				<div className="m-auto">
-					<ImagePreview canvasRef={ canvasRef } watch={ image } hide={ !image } />
-
 					{
 						image ? (
 							<>

@@ -1,4 +1,4 @@
-import { RefCanvas } from "./Canvas.jsx";
+import { Canvas } from "./Canvas.jsx";
 
 function handleCanvasClick(e, tile) {
 	if(e.ctrlKey) {
@@ -21,7 +21,7 @@ export function TileSetPreview({ tileset }) {
 								{
 									row.map((tile, x) => {
 										return (
-											<RefCanvas
+											<Canvas
 												key={ tile.id }
 												className={ `p-2 border border-gray-200 hover:border-gray-400 active:bg-gray-100 border-solid rounded shadow-md hover:shadow-lg cursor-pointer` }
 												canvas={ tile.canvas }

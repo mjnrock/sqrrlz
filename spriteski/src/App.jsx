@@ -1,43 +1,17 @@
 import React, { useReducer } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+
 import Default from "./routes/Default";
 import Tessellator from "./routes/Tessellator";
 import Mixer from "./routes/Mixer";
 
-export const initState = {
-	tileset: null,
-	image: null,
-	isRowXCol: true,
-	tileWidth: 32,
-	tileHeight: 32,
-};
-export const Context = React.createContext();
-
-export const EnumAction = {
-	SET_TILESET: "SET_TILESET",
-	SET_TILESET_DIRECTION: "SET_TILESET_DIRECTION",
-};
+import { Context as TessellationContext, State, reducer } from "./contexts/Tessellation";
 
 export function App() {
-	const [ state, dispatch ] = useReducer((state, action) => {
-		switch(action.type) {
-			case EnumAction.SET_TILESET:
-				return {
-					...state,
-					...action.payload,
-				};
-			case EnumAction.SET_TILESET_DIRECTION:
-				return {
-					...state,
-					isRowXCol: action.payload,
-				};
-			default:
-				return state;
-		}
-	}, initState);
+	const [ state, dispatch ] = useReducer(reducer, State());
 
 	return (
-		<Context.Provider value={ [ state, dispatch ] }>
+		<TessellationContext.Provider value={ [ state, dispatch ] }>
 			<BrowserRouter>
 				<Routes>
 					<Route path="/" element={ <Default /> } />
@@ -45,7 +19,7 @@ export function App() {
 					<Route path="/mixer" element={ <Mixer /> } />
 				</Routes>
 			</BrowserRouter>
-		</Context.Provider>
+		</TessellationContext.Provider>
 	);
 }
 
