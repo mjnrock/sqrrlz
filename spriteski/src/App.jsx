@@ -7,7 +7,6 @@ import Mixer from "./routes/Mixer";
 export const initState = {
 	tileset: null,
 	image: null,
-	size: 1,
 	isRowXCol: true,
 	tileWidth: 32,
 	tileHeight: 32,
@@ -16,7 +15,6 @@ export const Context = React.createContext();
 
 export const EnumAction = {
 	SET_TILESET: "SET_TILESET",
-	SET_TILESET_SIZE: "SET_TILESET_SIZE",
 	SET_TILESET_DIRECTION: "SET_TILESET_DIRECTION",
 };
 
@@ -27,11 +25,6 @@ export function App() {
 				return {
 					...state,
 					...action.payload,
-				};
-			case EnumAction.SET_TILESET_SIZE:
-				return {
-					...state,
-					size: action.payload,
 				};
 			case EnumAction.SET_TILESET_DIRECTION:
 				return {

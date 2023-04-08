@@ -11,8 +11,6 @@ export async function byGrid({ source, isRowXCol, tileWidth = 32, tileHeight = 3
 	});
 	let ctx = tileset.canvas.getContext("2d");
 
-	console.info(isRowXCol, tileset.width, tileset.height)
-
 	let rows = isRowXCol ? canvas.height / tileHeight : canvas.width / tileWidth,
 		cols = isRowXCol ? canvas.width / tileWidth : canvas.height / tileHeight;
 
@@ -34,11 +32,9 @@ export async function byGrid({ source, isRowXCol, tileWidth = 32, tileHeight = 3
 				],
 			});
 
-			console.log(sx, sy, col, row)
-
 			ctx.drawImage(tile.canvas, col * tileWidth, row * tileHeight);
 
-			tileset.addTile(tile);
+			tileset.setTile(`${ col },${ row }`, tile);
 		}
 	}
 

@@ -6,7 +6,6 @@ import { InputText } from "../components/InputField.jsx";
 import { FileUpload } from "../components/tessellator/FileUpload.jsx";
 import { ImagePreview } from "../components/tessellator/ImagePreview.jsx";
 import { TileSetPreview } from "../components/tessellator/TileSetPreview.jsx";
-import { Canvas } from "../components/tessellator/Canvas.jsx";
 
 import { Context, EnumAction } from "../App.jsx";
 import { Link } from "react-router-dom";
@@ -14,15 +13,28 @@ import { Link } from "react-router-dom";
 export function Tessellator() {
 	const [ state, dispatch ] = useContext(Context);
 	const canvasRef = useRef(null);
-	const { image, size, isRowXCol, tileset, tileWidth, tileHeight } = state;
 
-	const dispatchTileset = ({ ...args } = {}) => {
+	const { image, isRowXCol, tileset, tileWidth, tileHeight } = state;
+
+	const tessellate = async ({ ...args } = {}) => {
+		if(image) {
+			const ts = await byGrid({
+				source: image,
+				isRowXCol: "isRowXCol" in args ? args.isRowXCol : isRowXCol,
+				tileWidth,
+				tileHeight,
+			});
+
+			canvasRef.current = ts.canvas;
+
+			args.tileset = ts;
+		}
+
 		dispatch({
 			type: EnumAction.SET_TILESET,
 			payload: {
 				image,
 				tileset,
-				size,
 				isRowXCol,
 				tileWidth,
 				tileHeight,
@@ -31,43 +43,13 @@ export function Tessellator() {
 		});
 	};
 
-	const calcSize = (input, { ...args } = {}) => {
-		if(!image || !tileset) {
-			return 1;
-		}
-
-		if(input === "even") {
-			return Math.ceil(Math.sqrt(tileset.tiles.length));
-		} else if(input === "source") {
-			if("isRowXCol" in args ? args.isRowXCol : isRowXCol) {
-				return Math.ceil(image.width / tileWidth);
-			} else {
-				return Math.ceil(image.height / tileHeight);
-			}
-		}
-
-		return size;
-	};
-	const tessellate = async ({ ...args } = {}) => {
-		const ts = await byGrid({
-			source: image,
-			isRowXCol: "isRowXCol" in args ? args.isRowXCol : isRowXCol,
-			tileWidth,
-			tileHeight,
-		});
-
-		canvasRef.current = ts.canvas;
-
-		dispatchTileset({ tileset: ts, size: calcSize("source", args), ...args });
-	};
-
 	return (
 		<div className="flex items-center justify-center h-screen">
 			<div className="flex flex-col gap-4">
 				{
 					!image ? (
 						<div className="m-auto">
-							<FileUpload onImage={ img => dispatchTileset({ image: img }) } />
+							<FileUpload onImage={ img => tessellate({ image: img }) } />
 						</div>
 					) : null
 				}
@@ -104,14 +86,12 @@ export function Tessellator() {
 										<button
 											className="px-4 py-2 mt-4 font-bold text-gray-700 border border-solid rounded bg-neutral-50 hover:bg-neutral-100 border-neutral-300 hover:border-neutral-400"
 											onClick={ e => tessellate({ isRowXCol: true }) }
-											style={ { fontFamily: "'Fredoka One', cursive" } }
 										>
 											LTR-TTB
 										</button>
 										<button
 											className="px-4 py-2 mt-4 font-bold text-gray-700 border border-solid rounded bg-neutral-50 hover:bg-neutral-100 border-neutral-300 hover:border-neutral-400"
 											onClick={ e => tessellate({ isRowXCol: false }) }
-											style={ { fontFamily: "'Fredoka One', cursive" } }
 										>
 											TTB-LTR
 										</button>
@@ -124,7 +104,7 @@ export function Tessellator() {
 
 				<div className="m-auto">
 					{
-						tileset && tileset.tiles && tileset.tiles.length ? (
+						tileset && tileset.tiles && tileset.tiles.size ? (
 							<>
 								<hr className="mt-4" />
 
@@ -137,7 +117,7 @@ export function Tessellator() {
 									</Link>
 
 									<div className="m-auto">
-										<TileSetPreview tileset={ tileset } size={ size } />
+										<TileSetPreview tileset={ tileset } />
 									</div>
 								</div>
 							</>
