@@ -1,11 +1,13 @@
 import { Tile } from "./Tile.js";
 
 export class TileSet extends Tile {
-	constructor ({ source, id, tags } = {}) {
-		super({ source, id, tags });
+	constructor ({ source, id, tags, ...rest } = {}) {
+		super({ source, id, tags, ...rest });
 
-		this.width = source ? source.width : 0;
-		this.height = source ? source.height : 0;
+		if(source) {
+			this.width = source ? source.width : 0;
+			this.height = source ? source.height : 0;
+		}
 
 		this.tiles = [];
 	}
@@ -23,6 +25,9 @@ export class TileSet extends Tile {
 
 	getTile(index) {
 		return this.tiles[ index ];
+	}
+	getTileAt(tx, ty) {
+		return this.tiles[ ty * this.width + tx ];
 	}
 };
 

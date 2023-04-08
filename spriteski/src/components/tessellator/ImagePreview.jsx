@@ -1,4 +1,15 @@
-export function CanvasPreview({ canvasRef, hide = true }) {
+import { useEffect } from "react";
+
+export function ImagePreview({ canvasRef, watch, hide = true }) {
+	useEffect(() => {
+		if(watch) {
+			const ctx = canvasRef.current.getContext("2d");
+			canvasRef.current.width = watch.width;
+			canvasRef.current.height = watch.height;
+			ctx.drawImage(watch, 0, 0);
+		}
+	}, [ watch ]);
+
 	return (
 		<canvas
 			ref={ canvasRef }
@@ -7,4 +18,4 @@ export function CanvasPreview({ canvasRef, hide = true }) {
 	);
 };
 
-export default CanvasPreview;
+export default ImagePreview;

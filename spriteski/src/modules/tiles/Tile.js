@@ -36,6 +36,9 @@ export class Tile extends Identity {
 		this.width = width;
 		this.height = height;
 
+		this.canvas.width = this.width;
+		this.canvas.height = this.height;
+
 		if(source) {
 			this.paint(source);
 		}

@@ -1,34 +1,44 @@
 import { Tile } from "./../Tile.js";
 import { TileSet } from "../TileSet.js";
+import Base64 from "../Base64.js";
 
-export async function byGrid({ source, isRowXCol = true, tileWidth = 32, tileHeight = 32 }) {
-	const tileset = await TileSet.Factory({ source });
+export async function byGrid({ source, isRowXCol, tileWidth = 32, tileHeight = 32 }) {
+	const canvas = await Base64.Decode(source);
 
-	function makeTile(row, col) {
-		let x = col / tileWidth,
-			y = row / tileHeight;
+	let tileset = new TileSet({
+		width: isRowXCol ? canvas.width : canvas.height,
+		height: isRowXCol ? canvas.height : canvas.width,
+	});
+	let ctx = tileset.canvas.getContext("2d");
 
-		return Tile.Factory({
-			source: [ tileset.canvas, col, row, tileWidth, tileHeight, 0, 0, tileWidth, tileHeight ],
-			width: tileWidth,
-			height: tileHeight,
-			tags: [ `${ x },${ y }` ],
-		});
-	}
+	console.info(isRowXCol, tileset.width, tileset.height)
 
-	if(isRowXCol) {
-		// LTR-TTB
-		for(let row = 0; row < tileset.height; row += tileHeight) {
-			for(let col = 0; col < tileset.width; col += tileWidth) {
-				tileset.addTile(await makeTile(row, col));
-			}
-		}
-	} else {
-		// TTB-LTR
-		for(let col = 0; col < tileset.width; col += tileWidth) {
-			for(let row = 0; row < tileset.height; row += tileHeight) {
-				tileset.addTile(await makeTile(row, col));
-			}
+	let rows = isRowXCol ? canvas.height / tileHeight : canvas.width / tileWidth,
+		cols = isRowXCol ? canvas.width / tileWidth : canvas.height / tileHeight;
+
+	for(let row = 0; row < rows; row++) {
+		for(let col = 0; col < cols; col++) {
+			let spx = isRowXCol ? col * tileWidth : row * tileHeight,
+				spy = isRowXCol ? row * tileHeight : col * tileWidth;
+
+			let sx = spx / (isRowXCol ? tileWidth : tileHeight),
+				sy = spy / (isRowXCol ? tileHeight : tileWidth);
+
+			let tile = await Tile.Factory({
+				source: [ canvas, spx, spy, tileWidth, tileHeight, 0, 0, tileWidth, tileHeight ],
+				width: tileWidth,
+				height: tileHeight,
+				tags: [
+					[ "s", [ sx, sy ] ],
+					[ "ts", [ col, row ] ],
+				],
+			});
+
+			console.log(sx, sy, col, row)
+
+			ctx.drawImage(tile.canvas, col * tileWidth, row * tileHeight);
+
+			tileset.addTile(tile);
 		}
 	}
 

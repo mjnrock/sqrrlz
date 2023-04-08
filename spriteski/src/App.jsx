@@ -4,7 +4,14 @@ import Default from "./routes/Default";
 import Tessellator from "./routes/Tessellator";
 import Mixer from "./routes/Mixer";
 
-export const initState = {};
+export const initState = {
+	tileset: null,
+	image: null,
+	size: 1,
+	isRowXCol: true,
+	tileWidth: 32,
+	tileHeight: 32,
+};
 export const Context = React.createContext();
 
 export const EnumAction = {

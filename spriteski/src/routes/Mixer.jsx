@@ -22,13 +22,13 @@ export function Mixer() {
 
 	//TODO: The order of the tiles is not preserved below -- force retessellations on changes, and create `sX,Y` (source) and `tsX,Y` (tileset) tags for each tile
 
-	const tileEntries = state.tileset.tiles.map(t => [ t.getTags()[ 0 ], t ]);	//? i=0 won't be the right index anymore
+	const tileEntries = state.tileset.tiles.map(t => [ t.tags.get("ts"), t ]);	//? i=0 won't be the right index anymore
 	const map = {};
 	let w = 0,
 		h = 0;
 	for(let [ key, value ] of tileEntries) {
 		// const [ x, y ] = key.slice(2).split(",").map(Number);
-		const [ x, y ] = key.split(",").map(Number);
+		const [ x, y ] = key.map(Number);
 
 		if(!map[ y ]) {
 			map[ y ] = {};
