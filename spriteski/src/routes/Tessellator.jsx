@@ -100,22 +100,20 @@ export function Tessellator() {
 									</div>
 
 									<div className="flex flex-row gap-2">
-										<button
-											className="px-4 py-2 mt-4 font-mono text-gray-700 border border-solid rounded bg-neutral-50 hover:bg-neutral-100 border-neutral-300 hover:border-neutral-400"
-											onClick={ e => tessellate() }
-											style={ {
-												fontFamily: "'Fredoka One', cursive"
-											} }
-										>
-											Tessellate
-										</button>
 
 										<button
-											className="px-4 py-2 mt-4 text-gray-700 border border-solid rounded bg-neutral-50 hover:bg-neutral-100 border-neutral-300 hover:border-neutral-400"
-											onClick={ e => tessellate({ isRowXCol: !isRowXCol }) }
+											className="px-4 py-2 mt-4 font-bold text-gray-700 border border-solid rounded bg-neutral-50 hover:bg-neutral-100 border-neutral-300 hover:border-neutral-400"
+											onClick={ e => tessellate({ isRowXCol: true }) }
 											style={ { fontFamily: "'Fredoka One', cursive" } }
 										>
-											Swap to { isRowXCol ? "TTB-LTR" : "LTR-TTB" }
+											LTR-TTB
+										</button>
+										<button
+											className="px-4 py-2 mt-4 font-bold text-gray-700 border border-solid rounded bg-neutral-50 hover:bg-neutral-100 border-neutral-300 hover:border-neutral-400"
+											onClick={ e => tessellate({ isRowXCol: false }) }
+											style={ { fontFamily: "'Fredoka One', cursive" } }
+										>
+											TTB-LTR
 										</button>
 									</div>
 								</div>
@@ -124,23 +122,25 @@ export function Tessellator() {
 					}
 				</div>
 
-				<hr className="mt-4" />
-
 				<div className="m-auto">
 					{
 						tileset && tileset.tiles && tileset.tiles.length ? (
-							<div className="flex flex-col items-center w-full gap-2">
-								<Link
-									to="/mixer"
-									className={ `px-4 py-2 mt-4 text-center text-gray-700 border border-solid rounded bg-neutral-50 hover:bg-neutral-100 border-neutral-300 hover:border-neutral-400` }
-								>
-									Next
-								</Link>
+							<>
+								<hr className="mt-4" />
 
-								<div className="m-auto">
-									<TileSetPreview tileset={ tileset } size={ size } />
+								<div className="flex flex-col items-center w-full gap-2 font-bold">
+									<Link
+										to="/mixer"
+										className={ `px-4 py-2 mt-4 text-center text-gray-700 border border-solid rounded bg-neutral-50 hover:bg-neutral-100 border-neutral-300 hover:border-neutral-400` }
+									>
+										Next
+									</Link>
+
+									<div className="m-auto">
+										<TileSetPreview tileset={ tileset } size={ size } />
+									</div>
 								</div>
-							</div>
+							</>
 						) : null
 					}
 				</div>
