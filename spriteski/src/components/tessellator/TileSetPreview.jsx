@@ -1,4 +1,4 @@
-import { Canvas } from "./Canvas.jsx";
+import { RefCanvas } from "./Canvas.jsx";
 
 
 export function TileSetPreview({ tiles, isRowXCol = true, size = 1 }) {
@@ -31,7 +31,7 @@ export function TileSetPreview({ tiles, isRowXCol = true, size = 1 }) {
 			}
 
 			rows[ rowIndex ][ columnIndex ] = (
-				<Canvas
+				<RefCanvas
 					key={ tile.id }
 					className={ `p-2 border border-gray-200 hover:border-gray-400 active:bg-gray-100 border-solid rounded shadow-md hover:shadow-lg cursor-pointer` }
 					canvas={ tile.canvas }
