@@ -32,19 +32,24 @@ export function Track({ tiles, factor = 128, onTimeChange, ...props }) {
 						/>
 
 						<input
-							className="py-1 mx-2 text-sm font-bold text-center border border-solid rounded shadow text-neutral-50 bg-neutral-600 border-neutral-300"
+							className="py-1 pl-4 mx-2 text-sm font-bold text-center border border-solid rounded shadow text-neutral-50 bg-neutral-600 border-neutral-300"
 							type="number"
 							value={ timing.get(tile.id) }
 							onChange={ e => setTime(tile.id, ~~e.target.value) }
 						/>
 
 						<div className="flex flex-row justify-between w-full gap-[1px] px-1 mt-1 rounded">
-							<button className="flex-1 py-1 text-xs text-center text-indigo-500 bg-indigo-100 border border-indigo-300 border-solid rounded hover:bg-indigo-300 active:bg-indigo-400" onClick={ () => setTime(tile.id, 125) }>8</button>
-							<button className="flex-1 py-1 text-xs text-center text-indigo-500 bg-indigo-100 border border-indigo-300 border-solid rounded hover:bg-indigo-300 active:bg-indigo-400" onClick={ () => setTime(tile.id, 200) }>5</button>
-							<button className="flex-1 py-1 text-xs text-center text-indigo-500 bg-indigo-100 border border-indigo-300 border-solid rounded hover:bg-indigo-300 active:bg-indigo-400" onClick={ () => setTime(tile.id, 250) }>4</button>
-							<button className="flex-1 py-1 text-xs text-center text-indigo-500 bg-indigo-100 border border-indigo-300 border-solid rounded hover:bg-indigo-300 active:bg-indigo-400" onClick={ () => setTime(tile.id, 333) }>3</button>
-							<button className="flex-1 py-1 text-xs text-center text-indigo-500 bg-indigo-100 border border-indigo-300 border-solid rounded hover:bg-indigo-300 active:bg-indigo-400" onClick={ () => setTime(tile.id, 500) }>2</button>
-							<button className="flex-1 py-1 text-xs text-center text-indigo-500 bg-indigo-100 border border-indigo-300 border-solid rounded hover:bg-indigo-300 active:bg-indigo-400" onClick={ () => setTime(tile.id, 1000) }>1</button>
+							{
+								[ 8, 5, 4, 3, 2, 1 ].map((time, i) => (
+									<button
+										className={ `flex-1 py-1 text-xs text-center text-indigo-500 bg-indigo-100 border border-indigo-300 border-solid rounded hover:bg-indigo-300 active:bg-indigo-400` }
+										onClick={ () => setTime(tile.id, ~~(1000 / time)) }
+										key={ i }
+									>
+										{ time }
+									</button>
+								))
+							}
 						</div>
 					</div>
 				))
