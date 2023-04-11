@@ -27,6 +27,20 @@ export class Tile extends Identity {
 		return tile;
 	}
 
+	static Copy(tile) {
+		let copy = new this();
+
+		copy.width = tile.width;
+		copy.height = tile.height;
+
+		copy.canvas.width = copy.width;
+		copy.canvas.height = copy.height;
+
+		copy.ctx.drawImage(tile.canvas, 0, 0);
+
+		return copy;
+	}
+
 	constructor ({ source, width = 32, height = 32, id, tags } = {}) {
 		super({ id, tags });
 

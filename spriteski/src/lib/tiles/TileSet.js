@@ -12,6 +12,14 @@ export class TileSet extends Tile {
 		this.tiles = new Map();
 	}
 
+	each(fn) {
+		if(typeof fn === "function") {
+			this.tiles.forEach(fn);
+		} else {
+			return Array.from(this.tiles.values());
+		}
+	}
+
 	get rows() {
 		return Array.from(this.tiles.keys()).reduce((max, key) => {
 			let row = ~~key.split(",")[ 1 ];

@@ -1,7 +1,7 @@
 import { useRef, useContext, useEffect } from "react";
 import { Link } from "react-router-dom";
 
-import { byGrid } from "./../modules/tiles/tessellators/Grid.js";
+import { byGrid } from "../lib/tessellators/Grid.js";
 
 import { InputText } from "../components/InputField.jsx";
 import { FileUpload } from "../components/tessellator/FileUpload.jsx";
@@ -30,7 +30,7 @@ export function Tessellator() {
 		}
 
 		dispatch({
-			type: EnumAction.SET_TILESET,
+			type: EnumAction.TESSELLATE,
 			payload: {
 				image,
 				tileset,
@@ -44,7 +44,7 @@ export function Tessellator() {
 
 	useEffect(() => {
 		dispatch({
-			type: EnumAction.SET_TILESET,
+			type: EnumAction.TESSELLATE,
 			payload: {
 				tileset: null,
 			},

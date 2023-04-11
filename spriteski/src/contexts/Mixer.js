@@ -3,20 +3,16 @@ import React from "react";
 export const Context = React.createContext();
 
 export const EnumAction = {
-	TESSELLATE: "TESSELLATE",
+	SWAP_INDEX: "SWAP_INDEX",
 };
 
 export const State = () => ({
-	tileset: null,
-	image: null,
-	isRowXCol: true,
-	tileWidth: 32,
-	tileHeight: 32,
+	tracks: [],
 });
 
 export const reducer = (state, action) => {
 	switch(action.type) {
-		case EnumAction.TESSELLATE:
+		case EnumAction.SWAP_INDEX:
 			return {
 				...state,
 				...action.payload,

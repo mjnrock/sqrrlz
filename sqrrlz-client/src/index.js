@@ -1,7 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 
-import "./modules/game/main";
+import "./lib/game/main";
 
 import App from "./App";
 

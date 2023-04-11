@@ -1,7 +1,7 @@
 import { useState } from "react";
 
 import { Canvas } from "./../tessellator/Canvas.jsx";
-import { PixelScaleCanvas } from "./../../modules/tiles/Base64.js";
+import { PixelScaleCanvas } from "./../../lib/tiles/Base64.js";
 
 export function Track({ tiles, factor = 128, onTimeChange, ...props }) {
 	const [ timing, setTiming ] = useState(new Map(tiles.map(tile => [ tile.id, 125 ])));

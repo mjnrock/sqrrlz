@@ -2,8 +2,8 @@ import { useState, useRef, useEffect } from "react";
 
 import { InputText } from "../components/InputField.jsx";
 
-import { Tile } from "./../modules/tiles/Tile.js";
-import { TileSet } from "./../modules/tiles/TileSet.js";
+import { Tile } from "./../lib/tiles/Tile.js";
+import { TileSet } from "./../lib/tiles/TileSet.js";
 
 export function CanvasComponent({ canvas, ...props }) {
 	const canvasRef = useRef(null);
