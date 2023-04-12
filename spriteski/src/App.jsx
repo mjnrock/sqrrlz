@@ -6,7 +6,7 @@ import Tessellator from "./routes/Tessellator.jsx";
 import Mixer from "./routes/Mixer.jsx";
 
 import { Context as TessellationContext, State as TessellationState, reducer as tessellationReducer } from "./contexts/Tessellation.js";
-import { Context as MixerContext, State as MixerState, EnumAction as MixerEnumAction, reducer as mixerReducer } from "./contexts/Mixer.js";
+import { Context as MixerContext, State as MixerState, reducer as mixerReducer } from "./contexts/Mixer.js";
 
 export function App() {
 	const [ mixerState, mixerDispatch ] = useReducer(mixerReducer, MixerState());
