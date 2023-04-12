@@ -29,7 +29,7 @@ export class Track extends Identity {
 		return this.frames.get(key);
 	}
 	add(...frames) {
-		frames.forEach((frame,i) => {
+		frames.forEach((frame, i) => {
 			this.frames.set(i, frame);
 		});
 
@@ -63,9 +63,12 @@ export class Track extends Identity {
 	swap(k1, k2) {
 		let f1 = this.frames.get(k1),
 			f2 = this.frames.get(k2);
-
+		
 		this.frames.set(k1, f2);
 		this.frames.set(k2, f1);
+		
+		f1 = this.frames.get(k1);
+		f2 = this.frames.get(k2);
 
 		return this;
 	}

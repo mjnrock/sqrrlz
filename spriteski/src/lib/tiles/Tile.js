@@ -1,5 +1,5 @@
-import { Base64 } from "./Base64.js";
-import { Identity } from "./Identity.js";
+import { Base64 } from "./../Base64.js";
+import { Identity } from "./../Identity.js";
 
 export class Tile extends Identity {
 	static async Factory({ source, id, tags, width, height, ...rest } = {}) {

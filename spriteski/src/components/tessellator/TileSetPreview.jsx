@@ -12,7 +12,7 @@ function handleCanvasClick(e, tile) {
 
 export function TileSetPreview({ tileset }) {
 	return (
-		<div className={ `flex flex-col w-full gap-2` }>
+		<div className={ `flex flex-col w-full gap-2 items-center` }>
 			{
 				tileset.asArray()
 					.map((row, y) => {
@@ -23,7 +23,7 @@ export function TileSetPreview({ tileset }) {
 										return (
 											<Canvas
 												key={ tile.id }
-												className={ `p-2 border border-gray-200 hover:border-gray-400 active:bg-gray-100 border-solid rounded shadow-md hover:shadow-lg cursor-pointer` }
+												className={ `p-2 border border-gray-200 bg-gray-50 hover:border-gray-400 active:bg-gray-100 border-solid rounded shadow-md hover:shadow-lg cursor-pointer` }
 												canvas={ tile.canvas }
 												onClick={ e => handleCanvasClick(e, tile) }
 											/>

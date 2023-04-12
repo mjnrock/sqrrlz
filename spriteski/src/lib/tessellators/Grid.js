@@ -1,6 +1,6 @@
 import { Tile } from "../tiles/Tile.js";
 import { TileSet } from "../tiles/TileSet.js";
-import Base64 from "../tiles/Base64.js";
+import Base64 from "../Base64.js";
 
 export async function byGrid({ source, isRowXCol, tileWidth = 32, tileHeight = 32 }) {
 	const canvas = await Base64.Decode(source);
