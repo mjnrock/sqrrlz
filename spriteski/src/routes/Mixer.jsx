@@ -9,6 +9,16 @@ import { Track as TrackJSX } from "../components/mixer/Track.jsx";
 import { Context as TessellationContext } from "./../contexts/Tessellation.js";
 import { Context as MixerContext, EnumAction as MixerEnumAction } from "./../contexts/Mixer.js";
 
+import { Ticker } from "./../lib/animator/Ticker.js";
+
+const ticker = new Ticker({
+	interval: 125,
+	listeners: [
+		({ dt, ip }, ...args) => console.log("tick", { dt, ip }, ...args),
+	]
+});
+ticker.start();
+
 export function Mixer() {
 	const [ mixerState, mixerDispatch ] = useContext(MixerContext);
 	const [ tessellationState, tessellationDispatch ] = useContext(TessellationContext);
