@@ -1,7 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 
-import "./lib/game/main";
+import "./modules/pixi-poc/main";
 
 import App from "./App";
 

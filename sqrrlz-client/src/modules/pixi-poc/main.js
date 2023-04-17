@@ -7,10 +7,15 @@ const app = new PIXI.Application({
 });
 document.body.appendChild(app.view);
 
-function gameLoop(delta) {
+let lastTime = 0;
+function gameLoop(elapsed) {
+	// Calculate delta time
+	const dt = (elapsed - lastTime) / 1000;
+	lastTime = elapsed;
+	
 	// Update game state and render the scene
-	update(delta);
-	render(delta);
+	update(dt);
+	render(dt);
 
 	// Request the next frame
 	requestAnimationFrame(gameLoop);
@@ -63,13 +68,13 @@ Entity.nextId = 0;
 
 // Systems
 class MovementSystem {
-	update(delta, entities) {
+	update(dt, entities) {
 		for(const entity of entities) {
 			if(entity.hasComponent(Transform) && entity.hasComponent(Velocity)) {
 				const transform = entity.getComponent(Transform);
 				const velocity = entity.getComponent(Velocity);
-				transform.x += velocity.x * delta;
-				transform.y += velocity.y * delta;
+				transform.x += velocity.x * dt;
+				transform.y += velocity.y * dt;
 			}
 		}
 	}
@@ -80,7 +85,7 @@ class RenderSystem {
 		this.app = app;
 	}
 
-	update(delta, entities) {
+	update(dt, entities) {
 		for(const entity of entities) {
 			if(entity.hasComponent(Transform) && entity.hasComponent(Sprite)) {
 				const transform = entity.getComponent(Transform);
@@ -105,36 +110,36 @@ const entities = [ character ];
 const movementSystem = new MovementSystem();
 const renderSystem = new RenderSystem(app);
 
-function update(delta) {
+function update(dt) {
 	// Handle input
 	const speed = 100;
 	const velocity = character.getComponent(Velocity);
 	velocity.x = 0;
 	velocity.y = 0;
 
-	if(keyIsDown("ArrowLeft")) {
-		velocity.x -= speed;
+	if(keyIsDown("ArrowLeft") || keyIsDown("a")) {
+		velocity.x = -speed;
 	}
-	if(keyIsDown("ArrowRight")) {
-		velocity.x += speed;
+	if(keyIsDown("ArrowRight") || keyIsDown("d")) {
+		velocity.x = speed;
 	}
-	if(keyIsDown("ArrowUp")) {
-		velocity.y -= speed;
+	if(keyIsDown("ArrowUp") || keyIsDown("w")) {
+		velocity.y = -speed;
 	}
-	if(keyIsDown("ArrowDown")) {
-		velocity.y += speed;
+	if(keyIsDown("ArrowDown") || keyIsDown("s")) {
+		velocity.y = speed;
 	}
 
 	// Update systems
-	movementSystem.update(delta, entities);
+	movementSystem.update(dt, entities);
 }
 
-function render(delta) {
+function render(dt) {
 	// Clear the stage
 	app.stage.removeChildren();
 
 	// Update render system
-	renderSystem.update(delta, entities);
+	renderSystem.update(dt, entities);
 }
 
 // Utility function to check if a key is currently pressed
