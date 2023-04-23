@@ -41,7 +41,10 @@ export class Game {
 		this.players = players;
 
 
-		this.worlds = worlds;
+		this.worlds = {
+			current: null,
+			...worlds,
+		};
 
 
 		this.render = {

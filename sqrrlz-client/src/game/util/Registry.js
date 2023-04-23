@@ -38,13 +38,26 @@ export class Registry extends Identity {
 	*[ Symbol.iterator ]() {
 		for(const [ id, entry ] of this._registry) {
 			if(Array.isArray(entry)) {
-				yield* entry.map(v => this[ v ]);
+				// NOOP
+				continue;
 			} else if(entry.length === 36 && validate(entry)) {
-				yield this[ entry ];
+				// NOOP
+				continue;
 			} else {
+				// Only return proper entries
 				yield entry;
 			}
 		}
+	}
+
+	asArray() {
+		const arr = [];
+
+		for(const entry of this) {
+			arr.push(entry);
+		}
+
+		return arr;
 	}
 
 	register(entry) {
