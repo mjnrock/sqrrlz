@@ -1,14 +1,14 @@
 import { Game } from "./Game";
 
-import { Transform } from "./entity/components/Transform";
-import { Velocity } from "./entity/components/Velocity";
-import { Sprite } from "./entity/components/Sprite";
+import { Transform } from "./data/components/Transform";
+import { Velocity } from "./data/components/Velocity";
+import { Sprite } from "./data/components/Sprite";
 
 import { MovementSystem } from "./systems/MovementSystem";
 import { RenderSystem } from "./systems/RenderSystem";
 
 import { Create as CreateSquirrel } from "./data/entities/Squirrel";
-import Terrain from "./world/Terrain";
+
 import Scene from "./world/Scene";
 import World from "./world/World";
 
@@ -57,9 +57,9 @@ game.input.keys.attachListeners(document);
 game.input.pointer.attachListeners(game.render.pixi.app.view);
 
 game.worlds.current = new World(game, {
-	entities: game.entities,
 	width: 256,
 	height: 256,
+	entities: game.entities,
 	update(dt, ip, scene) {
 		game.systems.Movement.update(dt, this.entities);
 	},

@@ -1,7 +1,7 @@
 import { System } from "./System";
 
-import { Transform } from "../entity/components/Transform";
-import { Velocity } from "../entity/components/Velocity";
+import { Transform } from "../data/components/Transform";
+import { Velocity } from "../data/components/Velocity";
 
 import { KeyInput } from "./../input/KeyInput";
 

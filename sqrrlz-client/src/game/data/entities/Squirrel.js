@@ -1,12 +1,12 @@
 import * as PIXI from "pixi.js";
 import { Entity } from "./../../entity/Entity";
 
-import { Transform } from "./../../entity/components/Transform";
-import { Velocity } from "./../../entity/components/Velocity";
-import { Sprite } from "./../../entity/components/Sprite";
+import { Transform } from "../components/Transform";
+import { Velocity } from "../components/Velocity";
+import { Sprite } from "../components/Sprite";
 
 export const components = [
-	[ Transform, () => ({ speed: 65, x: Math.random() * 800, y: Math.random() * 800 }) ],
+	[ Transform, () => ({ speed: 65, x: Math.random() * 800, y: Math.random() * 800, facing: Math.floor(Math.random() * 8) * 45 }) ],
 	[ Velocity, { x: 0, y: 0 } ],
 	[ Sprite, { texture: PIXI.Texture.from("assets/images/squirrel.png") } ],
 ];

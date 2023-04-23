@@ -1,7 +1,7 @@
 import { System } from "./System";
 
-import { Transform } from "../entity/components/Transform";
-import { Sprite } from "../entity/components/Sprite";
+import { Transform } from "../data/components/Transform";
+import { Sprite } from "../data/components/Sprite";
 
 export class RenderSystem extends System {
 	update(dt, entities) {
