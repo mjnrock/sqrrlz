@@ -10,8 +10,6 @@ import { Entity } from "./entity/Entity";
 import { MovementSystem } from "./systems/MovementSystem";
 import { RenderSystem } from "./systems/RenderSystem";
 
-import { KeyInput } from "./input/KeyInput";
-
 const game = new Game({
 	entities: [
 		[ new Entity([
@@ -22,29 +20,9 @@ const game = new Game({
 	],
 	loop: {
 		onTick: (dt, ip) => {
-			const { speed } = game.entities.player.get(Transform);
-			const velocity = game.entities.player.get(Velocity);
-
-			velocity.x = 0;
-			velocity.y = 0;
-
-			if(game.input.keys.has(KeyInput.EnumKeyMask.LEFT)) {
-				velocity.x = -speed;
-			}
-			if(game.input.keys.has(KeyInput.EnumKeyMask.RIGHT)) {
-				velocity.x = speed;
-			}
-			if(game.input.keys.has(KeyInput.EnumKeyMask.UP)) {
-				velocity.y = -speed;
-			}
-			if(game.input.keys.has(KeyInput.EnumKeyMask.DOWN)) {
-				velocity.y = speed;
-			}
-
 			game.systems.Movement.update(dt, game.entities);
 		},
 		onRender: (dt, ip) => {
-			game.render.pixi.app.stage.removeChildren();
 			game.systems.Render.update(dt, game.entities);
 		},
 	},
@@ -73,6 +51,6 @@ game.input.keys.attachListeners(document);
 game.input.pointer.attachListeners(game.render.pixi.app.view);
 
 game.loop.start();
+setTimeout(() => game.render.pixi.resize(), 1);
 
 console.warn(game);
-setTimeout(() => game.render.pixi.resize(), 1);
