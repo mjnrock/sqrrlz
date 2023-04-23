@@ -17,7 +17,7 @@ const ticker = new Ticker({
 		({ dt, ip }, ...args) => console.log("tick", { dt, ip }, ...args),
 	]
 });
-ticker.start();
+// ticker.start();
 
 export function Mixer() {
 	const [ mixerState, mixerDispatch ] = useContext(MixerContext);
