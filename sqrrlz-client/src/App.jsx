@@ -1,6 +1,6 @@
 export function App() {
 	return (
-		<div>
+		<div className="w-full text-2xl font-bold text-center">
 			hi
 		</div>
 	);

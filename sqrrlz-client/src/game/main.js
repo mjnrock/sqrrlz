@@ -1,91 +1,72 @@
-import * as PIXI from "pixi.js";
 import { Game } from "./Game";
 
-import { Transform } from "./entity/components/Transform";
-import { Velocity } from "./entity/components/Velocity";
-import { Sprite } from "./entity/components/Sprite";
-
-import { Entity } from "./entity/Entity";
+import { Transform } from "./data/components/Transform";
+import { Velocity } from "./data/components/Velocity";
+import { Sprite } from "./data/components/Sprite";
 
 import { MovementSystem } from "./systems/MovementSystem";
 import { RenderSystem } from "./systems/RenderSystem";
 
-const characterTexture = PIXI.Texture.from("assets/images/squirrel.png");
-const character = new Entity([
-	new Transform(400, 300),
-	new Velocity(0, 0),
-	new Sprite(characterTexture),
-]);
+import { Create as CreateSquirrel } from "./data/entities/Squirrel";
 
-console.log(character);
-console.log(character.get(Transform));
-console.log(character.has(Transform));
-
-const entities = [ character ];
-
-// Utility function to check if a key is currently pressed
-const keysDown = new Set();
-
-document.addEventListener("keydown", (event) => {
-	keysDown.add(event.key);
-});
-
-document.addEventListener("keyup", (event) => {
-	keysDown.delete(event.key);
-});
-
-function keyIsDown(key) {
-	return keysDown.has(key);
-}
-
-
+import Scene from "./world/Scene";
+import World from "./world/World";
 
 const game = new Game({
+	entities: [
+		[ CreateSquirrel(), "player" ],
+		...Array.from({ length: 10 }, () => CreateSquirrel()),
+	],
 	loop: {
+		fps: 30,
 		onTick: (dt, ip) => {
-			// Handle input
-			const speed = 100;
-			const velocity = character.get(Velocity);
-			velocity.x = 0;
-			velocity.y = 0;
-
-			if(keyIsDown("ArrowLeft") || keyIsDown("a")) {
-				velocity.x = -speed;
-			}
-			if(keyIsDown("ArrowRight") || keyIsDown("d")) {
-				velocity.x = speed;
-			}
-			if(keyIsDown("ArrowUp") || keyIsDown("w")) {
-				velocity.y = -speed;
-			}
-			if(keyIsDown("ArrowDown") || keyIsDown("s")) {
-				velocity.y = speed;
-			}
-
-			// Update systems
-			movementSystem.update(dt, entities);
+			game.worlds.current.update(dt, ip, game.scene);
 		},
 		onRender: (dt, ip) => {
-			// Clear the stage
-			game.render.pixi.app.stage.removeChildren();
-
-			// Update render system
-			renderSystem.update(dt, entities);
+			game.systems.Render.update(dt, game.entities);
 		},
+	},
+	library: {
+		components: {
+			Transform,
+			Velocity,
+			Sprite,
+		},
+		systems: {
+			Movement: MovementSystem,
+			Render: RenderSystem,
+		},
+	},
+	listeners: {
+		keys: [
+			// (...args) => console.log("KeyInput", ...args),
+		],
+		pointer: [
+			// (...args) => console.log("PointerInput", ...args),
+			(type, e) => {
+				if(type === "PointerDown") {
+					game.entities.player.get(Transform).x = e.x - game.entities.player.get(Sprite).sprite.width / 2;
+					game.entities.player.get(Transform).y = e.y - game.entities.player.get(Sprite).sprite.height / 2;
+				}
+			}
+		],
 	},
 });
 
-const movementSystem = new MovementSystem();
-const renderSystem = new RenderSystem(game.render.pixi.app);
+game.input.keys.attachListeners(document);
+game.input.pointer.attachListeners(game.render.pixi.app.view);
 
-game.library.components.registerManyAliased({
-	Transform,
-	Velocity,
-	Sprite,
+game.worlds.current = new World(game, {
+	width: 256,
+	height: 256,
+	entities: game.entities,
+	update(dt, ip, scene) {
+		game.systems.Movement.update(dt, this.entities);
+	},
 });
-
-console.log(game.library.components);
-
-console.log(game.render.pixi.app);
+game.scene = new Scene(game, { world: game.worlds.current });
 
 game.loop.start();
+setTimeout(() => game.render.pixi.resize(), 1);
+
+console.warn(game);

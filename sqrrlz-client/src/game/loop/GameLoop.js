@@ -1,8 +1,9 @@
 import Identity from "../util/Identity";
 
 export class GameLoop extends Identity {
-	constructor ({ id, tags = [], onTick, onRender, ...props } = {}) {
+	constructor ({ id, tags = [], fps = 24, onTick, onRender, ...props } = {}) {
 		super({ id, tags });
+
 		this.ticks = 0;
 		this.lastTick = 0;
 		this.tickId = null;
@@ -12,7 +13,7 @@ export class GameLoop extends Identity {
 		this.lastRender = 0;
 		this.onRender = onRender;
 
-		this.fps = 24;
+		this.fps = fps;
 		this.startTime = 0;
 		this.isRunning = false;
 

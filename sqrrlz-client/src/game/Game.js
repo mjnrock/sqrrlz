@@ -1,52 +1,61 @@
 import { Registry } from "./util/Registry";
 import { GameLoop } from "./loop/GameLoop";
 import { Pixi } from "./render/pixi/Pixi";
+import { KeyInput } from "./input/KeyInput";
+import PointerInput from "./input/PointerInput";
 
 export class Game {
-	constructor ({ library = {}, loop = {}, pixi = {} } = {}) {
+	constructor ({ library = {}, loop = {}, pixi = {}, players = {}, worlds = {}, entities = [], listeners = {} } = {}) {
 		this.library = {
 			assets: {
 				images: new Registry(),
 				sounds: new Registry(),
 				sprites: new Registry(),
 			},
-			components: new Registry(),
-			entities: new Registry(),
-			systems: new Registry(),
-			items: new Registry(),
-			world: new Registry(),
+			components: {},
+			entities: {},
+			systems: {},
+			worlds: new Registry(),
 			...library,
 		};
 
+		this.systems = {};
+		for(const [ name, system ] of Object.entries(this.library.systems)) {
+			this.systems[ name ] = new system(this);
+		}
+
+		this.entities = new Registry();
+		for(const entity of entities) {
+			if(Array.isArray(entity)) {
+				this.entities.registerAliased(...entity);
+			} else {
+				this.entities.register(entity);
+			}
+		}
 
 		this.loop = new GameLoop(loop);
+		this.loop.onTick.bind(this);
+		this.loop.onRender.bind(this);
 
 
-		this.players = new Registry();
+		this.players = players;
 
 
-		this.world = new Registry();
+		this.worlds = {
+			current: null,
+			...worlds,
+		};
 
 
 		this.render = {
 			pixi: new Pixi(pixi),
 		};
-		document.body.appendChild(this.render.pixi.app.view);
+		this.render.pixi.mount(document.body);
 
 
 		this.input = {
-			keys: {
-				onKeyDown: null,
-				onKeyUp: null,
-				mask: 0,
-			},
-			pointer: {
-				onMouseDown: null,
-				onMouseUp: null,
-				onMouseMove: null,
-				onMouseWheel: null,
-				mask: 0,
-			},
+			keys: new KeyInput({ subscribers: listeners.keys }),
+			pointer: new PointerInput({ subscribers: listeners.pointer }),
 		};
 	}
 };
