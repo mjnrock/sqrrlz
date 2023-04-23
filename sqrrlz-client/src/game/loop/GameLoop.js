@@ -3,6 +3,7 @@ import Identity from "../util/Identity";
 export class GameLoop extends Identity {
 	constructor ({ id, tags = [], onTick, onRender, ...props } = {}) {
 		super({ id, tags });
+
 		this.ticks = 0;
 		this.lastTick = 0;
 		this.tickId = null;

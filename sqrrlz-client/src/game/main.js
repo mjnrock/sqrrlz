@@ -10,82 +10,69 @@ import { Entity } from "./entity/Entity";
 import { MovementSystem } from "./systems/MovementSystem";
 import { RenderSystem } from "./systems/RenderSystem";
 
-const characterTexture = PIXI.Texture.from("assets/images/squirrel.png");
-const character = new Entity([
-	new Transform(400, 300),
-	new Velocity(0, 0),
-	new Sprite(characterTexture),
-]);
-
-console.log(character);
-console.log(character.get(Transform));
-console.log(character.has(Transform));
-
-const entities = [ character ];
-
-// Utility function to check if a key is currently pressed
-const keysDown = new Set();
-
-document.addEventListener("keydown", (event) => {
-	keysDown.add(event.key);
-});
-
-document.addEventListener("keyup", (event) => {
-	keysDown.delete(event.key);
-});
-
-function keyIsDown(key) {
-	return keysDown.has(key);
-}
-
-
+import { KeyInput } from "./input/KeyInput";
 
 const game = new Game({
+	entities: [
+		[ new Entity([
+			new Transform({ speed: 165, x: 400, y: 300 }),
+			new Velocity(0, 0),
+			new Sprite(PIXI.Texture.from("assets/images/squirrel.png")),
+		]), "player" ],
+	],
 	loop: {
 		onTick: (dt, ip) => {
-			// Handle input
-			const speed = 100;
-			const velocity = character.get(Velocity);
+			const { speed } = game.entities.player.get(Transform);
+			const velocity = game.entities.player.get(Velocity);
+
 			velocity.x = 0;
 			velocity.y = 0;
 
-			if(keyIsDown("ArrowLeft") || keyIsDown("a")) {
+			if(game.input.keys.has(KeyInput.EnumKeyMask.LEFT)) {
 				velocity.x = -speed;
 			}
-			if(keyIsDown("ArrowRight") || keyIsDown("d")) {
+			if(game.input.keys.has(KeyInput.EnumKeyMask.RIGHT)) {
 				velocity.x = speed;
 			}
-			if(keyIsDown("ArrowUp") || keyIsDown("w")) {
+			if(game.input.keys.has(KeyInput.EnumKeyMask.UP)) {
 				velocity.y = -speed;
 			}
-			if(keyIsDown("ArrowDown") || keyIsDown("s")) {
+			if(game.input.keys.has(KeyInput.EnumKeyMask.DOWN)) {
 				velocity.y = speed;
 			}
 
-			// Update systems
-			movementSystem.update(dt, entities);
+			game.systems.Movement.update(dt, game.entities);
 		},
 		onRender: (dt, ip) => {
-			// Clear the stage
 			game.render.pixi.app.stage.removeChildren();
-
-			// Update render system
-			renderSystem.update(dt, entities);
+			game.systems.Render.update(dt, game.entities);
 		},
+	},
+	library: {
+		components: {
+			Transform,
+			Velocity,
+			Sprite,
+		},
+		systems: {
+			Movement: MovementSystem,
+			Render: RenderSystem,
+		},
+	},
+	listeners: {
+		keys: [
+			(...args) => console.log("KeyInput", ...args),
+		],
+		pointer: [
+			// (...args) => console.log("PointerInput", ...args),
+		],
 	},
 });
 
-const movementSystem = new MovementSystem();
-const renderSystem = new RenderSystem(game.render.pixi.app);
-
-game.library.components.registerManyAliased({
-	Transform,
-	Velocity,
-	Sprite,
-});
-
-console.log(game.library.components);
-
-console.log(game.render.pixi.app);
+game.input.keys.attachListeners(document);
+game.input.pointer.attachListeners(game.render.pixi.app.view);
 
 game.loop.start();
+
+console.warn(game);
+setTimeout(() => game.render.pixi.resize(), 1);

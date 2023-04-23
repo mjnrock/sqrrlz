@@ -4,10 +4,10 @@ import { Transform } from "../entity/components/Transform";
 import { Sprite } from "../entity/components/Sprite";
 
 export class RenderSystem extends System {
-	constructor (app, opts = {}) {
+	constructor (game, opts = {}) {
 		super({ ...opts });
 
-		this.app = app;
+		this.game = game;
 	}
 
 	update(dt, entities) {
@@ -19,7 +19,7 @@ export class RenderSystem extends System {
 				sprite.sprite.x = transform.x;
 				sprite.sprite.y = transform.y;
 
-				this.app.stage.addChild(sprite.sprite);
+				this.game.render.pixi.app.stage.addChild(sprite.sprite);
 			}
 		}
 	}

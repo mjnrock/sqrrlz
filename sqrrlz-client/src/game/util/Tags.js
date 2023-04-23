@@ -100,6 +100,10 @@ export class Tags {
 		return this;
 	}
 
+	each(callback) {
+		return Object.entries(this.tags).map(callback);
+	}
+
 	toObject(argsObj = {}, raw = false) {
 		let object = {};
 

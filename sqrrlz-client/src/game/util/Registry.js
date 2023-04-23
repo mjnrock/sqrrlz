@@ -2,7 +2,7 @@ import { validate, v4 as uuid } from "uuid";
 import Identity from "./Identity";
 
 export class Registry extends Identity {
-	constructor ({ entries = [], id, tags = [] } = {}) {
+	constructor (entries = [], { id, tags = [] } = {}) {
 		super({ id, tags });
 
 		this._registry = new Map();
@@ -14,14 +14,18 @@ export class Registry extends Identity {
 				if(prop in target) {
 					return target[ prop ];
 				} else {
-					const value = target.get(prop);
+					const value = target._registry.get(prop);
+
+					if(!value) {
+						return value;
+					}
 
 					if(Array.isArray(value)) {
 						/* Pool */
-						return value.map(v => target[ v ]);
+						return value.map(v => target._registry.get(v));
 					} else if(value.length === 36 && validate(value)) {
 						/* Alias */
-						return target[ value ];
+						return target._registry.get(value);
 					} else {
 						/* Entry */
 						return value;
@@ -31,12 +35,24 @@ export class Registry extends Identity {
 		});
 	}
 
+	*[ Symbol.iterator ]() {
+		for(const [ id, entry ] of this._registry) {
+			if(Array.isArray(entry)) {
+				yield* entry.map(v => this[ v ]);
+			} else if(entry.length === 36 && validate(entry)) {
+				yield this[ entry ];
+			} else {
+				yield entry;
+			}
+		}
+	}
+
 	register(entry) {
-		if(typeof entry === "object" && !this.has(entry.id)) {
+		if(typeof entry === "object" && !this._registry.has(entry.id)) {
 			this._registry.set(entry.id, entry);
 
 			if(entry instanceof Identity) {
-				entry.tags.forEach((value, key) => {
+				entry.tags.each(([ k, v ], key) => {
 					this.addToPool(key, entry.id)
 				});
 			}
@@ -172,7 +188,7 @@ export class Registry extends Identity {
 			registry._registry.forEach(entry => entries.push(entry));
 		});
 
-		return new Registry({ entries });
+		return new Registry(entries);
 	}
 	intersect(...registries) {
 		const entries = [];
@@ -185,6 +201,6 @@ export class Registry extends Identity {
 			});
 		});
 
-		return new Registry({ entries });
+		return new Registry(entries);
 	}
 };
